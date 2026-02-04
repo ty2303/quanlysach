@@ -354,18 +354,28 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="imageFiles" class="form-label">Tải ảnh lên (Chọn nhiều ảnh)</label>
-                    <input type="file" class="form-control" id="imageFiles" name="imageFiles" multiple
-                        accept="image/png, image/jpeg, image/jpg, image/webp">
-                    <small class="form-text">Chọn các file ảnh từ máy tính (nếu muốn thêm mới).</small>
+                    <label class="form-label">Ảnh hiện tại</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div th:each="img : ${book.imageUrls}" class="position-relative d-inline-block"
+                            style="margin-right: 10px; margin-bottom: 10px;">
+                            <img th:src="${img}" class="rounded border"
+                                style="width: 100px; height: 140px; object-fit: cover;">
+                            <input type="hidden" name="keptImageUrls" th:value="${img}">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                style="padding: 0 5px; margin: 2px;" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div th:if="${book.imageUrls == null or book.imageUrls.isEmpty()}"
+                            class="text-muted fst-italic">Không có ảnh nào.</div>
+                    </div>
                 </div>
 
                 <div class="mb-4">
-                    <label for="imageUrls" class="form-label">URL hình ảnh (Mỗi dòng 1 link)</label>
-                    <textarea class="form-control" id="imageUrls" name="imageUrls" rows="3"
-                        placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-                        th:text="${book.imageUrls != null ? #strings.listJoin(book.imageUrls, '&#10;') : ''}"></textarea>
-                    <small class="form-text">Nhập mỗi link ảnh trên một dòng. Link đầu tiên sẽ là ảnh bìa.</small>
+                    <label for="imageFiles" class="form-label">Tải thêm ảnh mới</label>
+                    <input type="file" class="form-control" id="imageFiles" name="imageFiles" multiple
+                        accept="image/png, image/jpeg, image/jpg, image/webp">
+                    <small class="form-text">Chọn các file ảnh từ máy tính để thêm vào.</small>
                 </div>
 
                 <div class="row mt-5">
