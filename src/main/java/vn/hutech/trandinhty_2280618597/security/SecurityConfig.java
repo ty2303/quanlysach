@@ -27,6 +27,9 @@ public class SecurityConfig {
         @org.springframework.beans.factory.annotation.Autowired
         private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
+        @org.springframework.beans.factory.annotation.Autowired
+        private CustomOAuth2UserService customOAuth2UserService;
+
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
@@ -59,6 +62,11 @@ public class SecurityConfig {
                                                 .successHandler(customAuthenticationSuccessHandler)
                                                 .failureUrl("/login?error=true")
                                                 .permitAll())
+                                .oauth2Login(oauth2 -> oauth2
+                                                .loginPage("/login")
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(customAuthenticationSuccessHandler))
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
                                                 .logoutSuccessUrl("/login?logout=true")

@@ -1,5 +1,7 @@
 package vn.hutech.trandinhty_2280618597.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,5 +16,10 @@ public class BookDTO {
     private Double price;
     private String categoryName;
     private String description;
-    private String imageUrl;
+    private List<String> imageUrls;
+
+    public void setImageUrl(String imageUrl) {
+        // Compatibility method: does nothing or handles conversion if needed for
+        // inbound DTO
+    }
 }

@@ -32,9 +32,16 @@ public class User {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
+    @Field("provider")
+    private String provider; // LOCAL, GOOGLE
+
+    @Field("provider_id")
+    private String providerId; // Google sub ID
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.provider = "LOCAL";
     }
 }

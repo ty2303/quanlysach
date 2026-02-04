@@ -144,6 +144,37 @@
 
                         <div th:each="item : ${order.items}" class="item-row">
                             <div class="row align-items-center">
+                                <!-- Image Column -->
+                                <div class="col-2">
+                                    <div th:id="'carousel-' + ${item.book.id}" class="carousel slide"
+                                        data-bs-ride="carousel"
+                                        th:if="${item.book.imageUrls != null and !item.book.imageUrls.isEmpty()}">
+                                        <div class="carousel-inner">
+                                            <div th:each="img, iterStat : ${item.book.imageUrls}" class="carousel-item"
+                                                th:classappend="${iterStat.first} ? 'active'">
+                                                <img th:src="${img}" class="d-block w-100 rounded"
+                                                    style="height: 80px; object-fit: cover;"
+                                                    th:alt="${item.book.title}">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button"
+                                            th:data-bs-target="'#carousel-' + ${item.book.id}" data-bs-slide="prev"
+                                            th:if="${item.book.imageUrls.size() > 1}" style="width: 20%;">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"
+                                                style="width: 1rem; height: 1rem;"></span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                            th:data-bs-target="'#carousel-' + ${item.book.id}" data-bs-slide="next"
+                                            th:if="${item.book.imageUrls.size() > 1}" style="width: 20%;">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"
+                                                style="width: 1rem; height: 1rem;"></span>
+                                        </button>
+                                    </div>
+                                    <img th:if="${item.book.imageUrls == null or item.book.imageUrls.isEmpty()}"
+                                        th:src="'https://via.placeholder.com/80x80?text=No+Image'"
+                                        class="img-fluid rounded" alt="Book Image">
+                                </div>
+
                                 <div class="col">
                                     <h6 class="mb-0" th:text="${item.book.title}">Tên sách</h6>
                                     <small class="text-muted" th:text="${item.book.author}">Tác giả</small>

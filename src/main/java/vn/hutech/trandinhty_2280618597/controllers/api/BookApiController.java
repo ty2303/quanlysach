@@ -73,7 +73,7 @@ public class BookApiController {
         dto.setAuthor(book.getAuthor());
         dto.setPrice(book.getPrice());
         dto.setDescription(book.getDescription());
-        dto.setImageUrl(book.getImageUrl());
+        dto.setImageUrls(book.getImageUrls());
         if (book.getCategory() != null) {
             dto.setCategoryName(book.getCategory().getName());
         }

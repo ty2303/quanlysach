@@ -167,9 +167,37 @@
         <div class="book-detail-card" th:if="${book != null}">
             <div class="row">
                 <!-- Book Image -->
+                <!-- Book Image with Carousel -->
                 <div class="col-lg-5 mb-4 mb-lg-0">
-                    <img th:src="${book.imageUrl != null and !book.imageUrl.isEmpty() ? book.imageUrl : 'https://via.placeholder.com/350x450?text=No+Image'}"
-                        th:alt="${book.title}" class="book-image">
+                    <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel"
+                        th:if="${book.imageUrls != null and !book.imageUrls.isEmpty()}">
+                        <div class="carousel-indicators">
+                            <button type="button" th:each="img, iterStat : ${book.imageUrls}"
+                                data-bs-target="#bookCarousel" th:data-bs-slide-to="${iterStat.index}"
+                                th:classappend="${iterStat.first} ? 'active'"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div th:each="img, iterStat : ${book.imageUrls}" class="carousel-item"
+                                th:classappend="${iterStat.first} ? 'active'">
+                                <img th:src="${img}" class="d-block w-100 book-image" th:alt="${book.title}">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#bookCarousel"
+                            data-bs-slide="prev" th:if="${book.imageUrls.size() > 1}">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#bookCarousel"
+                            data-bs-slide="next" th:if="${book.imageUrls.size() > 1}">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+
+                    <!-- Fallback if no images -->
+                    <img th:if="${book.imageUrls == null or book.imageUrls.isEmpty()}"
+                        th:src="'https://via.placeholder.com/350x450?text=No+Image'" th:alt="${book.title}"
+                        class="book-image">
                 </div>
 
                 <!-- Book Info -->

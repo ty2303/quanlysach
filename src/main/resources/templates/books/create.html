@@ -324,7 +324,7 @@
         </div>
 
         <div class="form-card">
-            <form th:action="@{/books}" th:object="${book}" method="post">
+            <form th:action="@{/books}" th:object="${book}" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <label for="title" class="form-label">Tên sách <span>*</span></label>
@@ -361,10 +361,17 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="imageUrl" class="form-label">URL hình ảnh</label>
-                    <input type="url" class="form-control" id="imageUrl" th:field="*{imageUrl}"
-                        placeholder="https://example.com/image.jpg">
-                    <small class="form-text">Link ảnh bìa sách (JPG, PNG, WebP...)</small>
+                    <label for="imageFiles" class="form-label">Tải ảnh lên (Chọn nhiều ảnh)</label>
+                    <input type="file" class="form-control" id="imageFiles" name="imageFiles" multiple
+                        accept="image/png, image/jpeg, image/jpg, image/webp">
+                    <small class="form-text">Chọn các file ảnh từ máy tính.</small>
+                </div>
+
+                <div class="mb-4">
+                    <label for="imageUrls" class="form-label">URL hình ảnh (Mỗi dòng 1 link)</label>
+                    <textarea class="form-control" id="imageUrls" name="imageUrls" rows="3"
+                        placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea>
+                    <small class="form-text">Nhập mỗi link ảnh trên một dòng. Link đầu tiên sẽ là ảnh bìa.</small>
                 </div>
 
                 <div class="row mt-5">

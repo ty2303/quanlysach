@@ -1,6 +1,7 @@
 package vn.hutech.trandinhty_2280618597.controllers;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,15 +73,60 @@ public class BookController {
     }
 
     // POST mappings
+    @Autowired
+    private vn.hutech.trandinhty_2280618597.services.FileStorageService fileStorageService;
+
+    // POST mappings
     @PostMapping
-    public String createBook(@ModelAttribute Book book) {
+    public String createBook(@ModelAttribute Book book,
+            @RequestParam(value = "imageUrls", required = false) String imageUrlsStr,
+            @RequestParam(value = "imageFiles", required = false) org.springframework.web.multipart.MultipartFile[] imageFiles) {
+        processImageUrls(book, imageUrlsStr, imageFiles);
         bookService.saveBook(book);
         return "redirect:/admin/books";
     }
 
     @PostMapping("/update")
-    public String updateBook(@ModelAttribute Book book) {
+    public String updateBook(@ModelAttribute Book book,
+            @RequestParam(value = "imageUrls", required = false) String imageUrlsStr,
+            @RequestParam(value = "imageFiles", required = false) org.springframework.web.multipart.MultipartFile[] imageFiles) {
+        processImageUrls(book, imageUrlsStr, imageFiles);
         bookService.saveBook(book);
         return "redirect:/admin/books";
+    }
+
+    private void processImageUrls(Book book, String imageUrlsStr,
+            org.springframework.web.multipart.MultipartFile[] imageFiles) {
+        List<String> urls = new java.util.ArrayList<>();
+
+        // 1. Giữ lại các URL cũ (từ textarea)
+        if (imageUrlsStr != null && !imageUrlsStr.trim().isEmpty()) {
+            String[] lines = imageUrlsStr.split("\\r?\\n");
+            for (String line : lines) {
+                if (!line.trim().isEmpty()) {
+                    urls.add(line.trim());
+                }
+            }
+        }
+
+        // 2. Thêm các file mới upload
+        if (imageFiles != null) {
+            for (org.springframework.web.multipart.MultipartFile file : imageFiles) {
+                if (!file.isEmpty()) {
+                    try {
+                        String fileName = fileStorageService.storeFile(file);
+                        // Thêm đường dẫn file vào list (có prefix /uploads/)
+                        urls.add("/uploads/" + fileName);
+                    } catch (Exception e) {
+                        e.printStackTrace(); // Log lỗi nếu upload thất bại
+                    }
+                }
+            }
+        }
+
+        // 3. Cập nhật vào book
+        if (!urls.isEmpty() || imageUrlsStr != null) {
+            book.setImageUrls(urls);
+        }
     }
 }
