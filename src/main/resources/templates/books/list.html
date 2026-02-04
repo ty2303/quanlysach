@@ -96,7 +96,9 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
                     <li class="nav-item"><a class="nav-link active" th:href="@{/books}">Sách</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/categories}">Danh mục</a></li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/categories}">Danh mục</a>
+                    </li>
                     <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link text-warning" th:href="@{/admin}">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -183,6 +185,11 @@
                         </p>
                         <div class="book-price mb-3"
                             th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+
+                        <!-- Xem chi tiết: Ai cũng thấy -->
+                        <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-eye me-1"></i> Xem chi tiết
+                        </a>
 
                         <!-- Admin actions: chỉ ADMIN thấy -->
                         <div class="d-flex gap-2 mb-2" sec:authorize="hasRole('ADMIN')">

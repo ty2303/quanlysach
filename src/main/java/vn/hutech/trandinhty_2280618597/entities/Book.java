@@ -15,22 +15,22 @@ import lombok.NoArgsConstructor;
 public class Book {
     @Id
     private String id;
-    
+
     @Field("title")
     private String title;
-    
+
     @Field("author")
     private String author;
-    
+
     @Field("price")
     private Double price;
-    
+
     @Field("category")
     private Category category;
-    
+
     @Field("description")
     private String description;
-    
+
     @Field("image")
     private String imageUrl;
 }
