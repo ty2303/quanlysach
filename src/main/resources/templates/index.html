@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Trang chủ - Quản lý Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 0;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+        }
+
+        .icon-books {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .icon-category {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .icon-cart {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .icon-orders {
+            background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+            color: white;
+        }
+
+        .icon-admin {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book me-2"></i>Quản lý Sách</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Sách</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/categories}">Danh mục</a></li>
+                    <!-- ADMIN: Dashboard link -->
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link text-warning" th:href="@{/admin}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <!-- USER only: Giỏ hàng và đơn hàng -->
+                    <li class="nav-item" sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/cart}">
+                            <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/orders}">Đơn hàng</a>
+                    </li>
+                    <!-- Authenticated user info -->
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <span class="nav-link">
+                            <i class="fas fa-user-circle"></i>
+                            <span sec:authentication="name">User</span>
+                            <span sec:authorize="hasRole('ADMIN')" class="admin-badge ms-1">ADMIN</span>
+                        </span>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn nav-link border-0 bg-transparent">
+                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                    <!-- Anonymous user menu -->
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/register}"><i class="fas fa-user-plus"></i> Đăng ký</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-book-open me-3"></i>Hệ thống Quản lý Sách
+            </h1>
+            <p class="lead mb-4">HUTECH - Đại học Công nghệ TP.HCM</p>
+            <p class="mb-4">Ứng dụng quản lý sách hoàn chỉnh với Spring Boot + MongoDB Atlas</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a th:href="@{/books}" class="btn btn-light btn-lg">
+                    <i class="fas fa-book me-2"></i>Xem danh sách sách
+                </a>
+                <a th:href="@{/register}" class="btn btn-outline-light btn-lg" sec:authorize="!isAuthenticated()">
+                    <i class="fas fa-user-plus me-2"></i>Đăng ký ngay
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mb-5">
+        <div class="row g-4">
+            <!-- Xem sách - ai cũng thấy -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-books">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h5 class="card-title">Xem Sách</h5>
+                    <p class="card-text text-muted">Tìm kiếm và xem thông tin chi tiết sách.</p>
+                    <a th:href="@{/books}" class="btn btn-outline-primary">Xem sách</a>
+                </div>
+            </div>
+
+            <!-- Danh mục - ai cũng thấy -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-category">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h5 class="card-title">Danh mục</h5>
+                    <p class="card-text text-muted">Phân loại sách theo các danh mục.</p>
+                    <a th:href="@{/categories}" class="btn btn-outline-success">Xem danh mục</a>
+                </div>
+            </div>
+
+            <!-- ADMIN: Quản lý sách -->
+            <div class="col-lg-3 col-md-6" sec:authorize="hasRole('ADMIN')">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-admin">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h5 class="card-title">Quản lý Sách</h5>
+                    <p class="card-text text-muted">Thêm, sửa, xóa sách (Admin).</p>
+                    <a th:href="@{/books/new}" class="btn btn-outline-warning">Thêm sách</a>
+                </div>
+            </div>
+
+            <!-- USER: Giỏ hàng -->
+            <div class="col-lg-3 col-md-6" sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h5 class="card-title">Giỏ hàng</h5>
+                    <p class="card-text text-muted">Thêm sách vào giỏ và thanh toán.</p>
+                    <a th:href="@{/cart}" class="btn btn-outline-danger">Xem giỏ hàng</a>
+                </div>
+            </div>
+
+            <!-- USER: Đơn hàng -->
+            <div class="col-lg-3 col-md-6" sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-orders">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h5 class="card-title">Đơn hàng</h5>
+                    <p class="card-text text-muted">Xem lịch sử đơn hàng và hóa đơn.</p>
+                    <a th:href="@{/orders}" class="btn btn-outline-info">Xem đơn hàng</a>
+                </div>
+            </div>
+
+            <!-- Anonymous: Giỏ hàng (cần đăng nhập) -->
+            <div class="col-lg-3 col-md-6" sec:authorize="!isAuthenticated()">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h5 class="card-title">Giỏ hàng</h5>
+                    <p class="card-text text-muted">Đăng nhập để mua sách.</p>
+                    <a th:href="@{/login}" class="btn btn-outline-secondary">Đăng nhập</a>
+                </div>
+            </div>
+
+            <!-- Anonymous: Đơn hàng (cần đăng nhập) -->
+            <div class="col-lg-3 col-md-6" sec:authorize="!isAuthenticated()">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon icon-orders">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h5 class="card-title">Đơn hàng</h5>
+                    <p class="card-text text-muted">Đăng nhập để xem đơn hàng.</p>
+                    <a th:href="@{/login}" class="btn btn-outline-secondary">Đăng nhập</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Links (for testing) -->
+    <div class="container mb-5" sec:authorize="!isAuthenticated()">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-primary">
+                    <i class="fas fa-user me-2"></i>
+                    <strong>Đăng ký User:</strong>
+                    <a th:href="@{/register}" class="alert-link">Đăng ký tài khoản User</a> để mua sách.
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-warning">
+                    <i class="fas fa-user-shield me-2"></i>
+                    <strong>Đăng ký Admin:</strong>
+                    <a th:href="@{/register-admin}" class="alert-link">Đăng ký tài khoản Admin</a> để quản lý sách.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-book me-2"></i>Hệ thống Quản lý Sách</h5>
+                    <p class="mb-0">Đồ án môn Lập trình ứng dụng Java</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Liên hệ</h5>
+                    <p class="mb-0">Đại học Công nghệ TP.HCM (HUTECH)</p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 HUTECH. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
