@@ -39,7 +39,8 @@ public class SecurityConfig {
                                                                 "/css/**", "/js/**", "/images/**", "/uploads/**")
                                                 .permitAll()
                                                 .requestMatchers("/books", "/books/search").permitAll()
-                                                .requestMatchers("/api/books", "/api/books/**", "/api/chat/**")
+                                                .requestMatchers("/api/books", "/api/books/**", "/api/v1/books/**",
+                                                                "/api/chat/**")
                                                 .permitAll()
                                                 // MoMo callback endpoints - must be public
                                                 .requestMatchers("/checkout/momo/return", "/checkout/momo/ipn")

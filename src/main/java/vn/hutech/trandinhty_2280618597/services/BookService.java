@@ -41,4 +41,9 @@ public class BookService {
     public List<Book> getBooksByCategory(String categoryId) {
         return bookRepository.findByCategoryId(categoryId);
     }
+
+    public org.springframework.data.domain.Page<Book> getAllBooks(int pageNo, int pageSize, String sortBy) {
+        return bookRepository.findAll(org.springframework.data.domain.PageRequest.of(pageNo, pageSize,
+                org.springframework.data.domain.Sort.by(sortBy)));
+    }
 }

@@ -22,4 +22,18 @@ public class BookDTO {
         // Compatibility method: does nothing or handles conversion if needed for
         // inbound DTO
     }
+
+    public static BookDTO from(vn.hutech.trandinhty_2280618597.entities.Book book) {
+        BookDTO dto = new BookDTO();
+        dto.setId(book.getId());
+        dto.setTitle(book.getTitle());
+        dto.setAuthor(book.getAuthor());
+        dto.setPrice(book.getPrice());
+        dto.setDescription(book.getDescription());
+        dto.setImageUrls(book.getImageUrls());
+        if (book.getCategory() != null) {
+            dto.setCategoryName(book.getCategory().getName());
+        }
+        return dto;
+    }
 }
