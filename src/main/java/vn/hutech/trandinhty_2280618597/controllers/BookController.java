@@ -35,7 +35,7 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public String searchBooks(@RequestParam(required = false) String keyword, Model model) {
+    public String searchBooks(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
         List<Book> books = bookService.searchBooks(keyword);
         model.addAttribute("books", books);
         model.addAttribute("keyword", keyword);
@@ -43,7 +43,7 @@ public class BookController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
+    public String showEditForm(@PathVariable("id") String id, Model model) {
         Book book = bookService.getBookById(id).orElse(new Book());
         model.addAttribute("book", book);
         model.addAttribute("categories", categoryService.getAllCategories());
@@ -51,7 +51,7 @@ public class BookController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteBook(@PathVariable String id) {
+    public String deleteBook(@PathVariable("id") String id) {
         bookService.deleteBookById(id);
         return "redirect:/admin/books";
     }
@@ -65,7 +65,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String showBookDetail(@PathVariable String id, Model model) {
+    public String showBookDetail(@PathVariable("id") String id, Model model) {
         Book book = bookService.getBookById(id).orElse(null);
         model.addAttribute("book", book);
         return "books/detail";

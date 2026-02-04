@@ -36,14 +36,14 @@ public class BookApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getBookById(@PathVariable String id) {
+    public ResponseEntity<BookDTO> getBookById(@PathVariable("id") String id) {
         return bookService.getBookById(id)
                 .map(book -> ResponseEntity.ok(convertToDTO(book)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookDTO>> searchBooks(@RequestParam String keyword) {
+    public ResponseEntity<List<BookDTO>> searchBooks(@RequestParam("keyword") String keyword) {
         List<Book> books = bookService.searchBooks(keyword);
         List<BookDTO> bookDTOs = books.stream()
                 .map(this::convertToDTO)
@@ -58,7 +58,7 @@ public class BookApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable("id") String id) {
         if (bookService.getBookById(id).isPresent()) {
             bookService.deleteBookById(id);
             return ResponseEntity.noContent().build();

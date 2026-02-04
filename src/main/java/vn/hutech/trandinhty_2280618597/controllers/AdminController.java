@@ -5,7 +5,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import vn.hutech.trandinhty_2280618597.repositories.BookRepository;
 import vn.hutech.trandinhty_2280618597.repositories.CategoryRepository;
@@ -89,5 +93,19 @@ public class AdminController {
     public String viewAllOrders(Model model) {
         model.addAttribute("orders", orderService.getAllOrders());
         return "admin/orders";
+    }
+
+    @PostMapping("/orders/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String updateOrderStatus(@PathVariable("id") String id,
+            @RequestParam("status") String status,
+            RedirectAttributes redirectAttributes) {
+        boolean success = orderService.updateOrderStatus(id, status);
+        if (success) {
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái đơn hàng thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể cập nhật trạng thái đơn hàng.");
+        }
+        return "redirect:/admin/orders";
     }
 }

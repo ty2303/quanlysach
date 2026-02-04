@@ -48,8 +48,8 @@ public class CartController {
     }
 
     @PostMapping("/add/{bookId}")
-    public String addToCart(@PathVariable String bookId,
-            @RequestParam(defaultValue = "1") int quantity,
+    public String addToCart(@PathVariable("bookId") String bookId,
+            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
             Principal principal) {
         if (principal == null) {
             return "redirect:/login";
@@ -64,8 +64,8 @@ public class CartController {
     }
 
     @PostMapping("/update/{bookId}")
-    public String updateQuantity(@PathVariable String bookId,
-            @RequestParam int quantity,
+    public String updateQuantity(@PathVariable("bookId") String bookId,
+            @RequestParam("quantity") int quantity,
             Principal principal) {
         if (principal == null) {
             return "redirect:/login";
@@ -80,7 +80,7 @@ public class CartController {
     }
 
     @PostMapping("/remove/{bookId}")
-    public String removeFromCart(@PathVariable String bookId, Principal principal) {
+    public String removeFromCart(@PathVariable("bookId") String bookId, Principal principal) {
         if (principal == null) {
             return "redirect:/login";
         }

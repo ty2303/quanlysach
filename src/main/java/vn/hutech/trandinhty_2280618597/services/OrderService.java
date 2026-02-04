@@ -90,4 +90,35 @@ public class OrderService {
     public List<Order> getAllOrders() {
         return orderRepository.findAllByOrderByOrderDateDesc();
     }
+
+    public boolean updateOrderStatus(String orderId, String newStatus) {
+        // Validate status
+        if (!isValidStatus(newStatus)) {
+            return false;
+        }
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            order.setStatus(newStatus);
+
+            // Update payment status if order is completed with COD
+            if (Order.STATUS_COMPLETED.equals(newStatus) &&
+                    Order.PAYMENT_METHOD_COD.equals(order.getPaymentMethod())) {
+                order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
+                order.setPaymentDate(LocalDateTime.now());
+            }
+
+            orderRepository.save(order);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidStatus(String status) {
+        return Order.STATUS_PENDING.equals(status) ||
+                Order.STATUS_CONFIRMED.equals(status) ||
+                Order.STATUS_COMPLETED.equals(status) ||
+                Order.STATUS_CANCELLED.equals(status);
+    }
 }

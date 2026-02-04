@@ -51,9 +51,24 @@
             font-weight: 600;
         }
 
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
         .status-completed {
             background: #d4edda;
             color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         @media print {
@@ -97,10 +112,17 @@
                                 <h3><i class="fas fa-file-invoice me-2"></i>Hóa đơn</h3>
                                 <p class="mb-0 opacity-75">Mã đơn hàng: <span th:text="${order.id}">ID</span></p>
                             </div>
-                            <span class="status-badge status-completed">
-                                <i class="fas fa-check-circle me-1"></i>
-                                <span
-                                    th:text="${order.status == 'COMPLETED' ? 'Hoàn thành' : 'Đang xử lý'}">Status</span>
+                            <span class="status-badge"
+                                th:classappend="${order.status == 'PENDING' ? 'status-pending' : 
+                                                   (order.status == 'CONFIRMED' ? 'status-confirmed' : 
+                                                   (order.status == 'COMPLETED' ? 'status-completed' : 'status-cancelled'))}">
+                                <i
+                                    th:class="${order.status == 'PENDING' ? 'fas fa-clock me-1' : 
+                                              (order.status == 'CONFIRMED' ? 'fas fa-thumbs-up me-1' : 
+                                              (order.status == 'COMPLETED' ? 'fas fa-check-circle me-1' : 'fas fa-times-circle me-1'))}"></i>
+                                <span th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : 
+                                               (order.status == 'CONFIRMED' ? 'Đã xác nhận' : 
+                                               (order.status == 'COMPLETED' ? 'Hoàn thành' : 'Đã hủy'))}">Status</span>
                             </span>
                         </div>
                     </div>

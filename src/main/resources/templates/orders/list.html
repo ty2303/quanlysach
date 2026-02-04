@@ -42,6 +42,16 @@
             color: #856404;
         }
 
+        .status-confirmed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
         .empty-orders {
             text-align: center;
             padding: 60px 20px;
@@ -117,11 +127,17 @@
                         </div>
                     </div>
                     <div class="col-md-2 text-end">
+                        <span class="status-badge status-pending" th:if="${order.status == 'PENDING'}">
+                            <i class="fas fa-clock me-1"></i>Chờ xử lý
+                        </span>
+                        <span class="status-badge status-confirmed" th:if="${order.status == 'CONFIRMED'}">
+                            <i class="fas fa-thumbs-up me-1"></i>Đã xác nhận
+                        </span>
                         <span class="status-badge status-completed" th:if="${order.status == 'COMPLETED'}">
                             <i class="fas fa-check-circle me-1"></i>Hoàn thành
                         </span>
-                        <span class="status-badge status-pending" th:if="${order.status == 'PENDING'}">
-                            <i class="fas fa-clock me-1"></i>Đang xử lý
+                        <span class="status-badge status-cancelled" th:if="${order.status == 'CANCELLED'}">
+                            <i class="fas fa-times-circle me-1"></i>Đã hủy
                         </span>
                         <div class="mt-2">
                             <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-primary btn-sm">

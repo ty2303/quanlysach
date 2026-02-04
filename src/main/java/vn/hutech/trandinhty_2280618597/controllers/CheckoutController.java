@@ -68,7 +68,7 @@ public class CheckoutController {
      * Process checkout with selected payment method
      */
     @PostMapping
-    public String processCheckout(@RequestParam String paymentMethod, Principal principal) {
+    public String processCheckout(@RequestParam("paymentMethod") String paymentMethod, Principal principal) {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -220,7 +220,7 @@ public class CheckoutController {
      * Payment success page
      */
     @GetMapping("/success")
-    public String successPage(@RequestParam(required = false) String orderId, Model model) {
+    public String successPage(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
         if (orderId != null) {
             orderService.getOrderById(orderId).ifPresent(order -> model.addAttribute("order", order));
         }
@@ -231,8 +231,8 @@ public class CheckoutController {
      * Payment failed page
      */
     @GetMapping("/failed")
-    public String failedPage(@RequestParam(required = false) String orderId,
-            @RequestParam(required = false) String error,
+    public String failedPage(@RequestParam(value = "orderId", required = false) String orderId,
+            @RequestParam(value = "error", required = false) String error,
             Model model) {
         if (orderId != null) {
             orderService.getOrderById(orderId).ifPresent(order -> model.addAttribute("order", order));

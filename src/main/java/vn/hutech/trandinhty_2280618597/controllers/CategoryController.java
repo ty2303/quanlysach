@@ -41,7 +41,7 @@ public class CategoryController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
+    public String showEditForm(@PathVariable("id") String id, Model model) {
         Category category = categoryService.getCategoryById(id).orElse(new Category());
         model.addAttribute("category", category);
         return "categories/edit";
@@ -54,7 +54,7 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable String id) {
+    public String deleteCategory(@PathVariable("id") String id) {
         categoryService.deleteCategoryById(id);
         return "redirect:/admin/categories";
     }

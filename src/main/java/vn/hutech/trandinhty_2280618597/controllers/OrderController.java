@@ -42,7 +42,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String viewOrder(@PathVariable String id, Principal principal, Model model) {
+    public String viewOrder(@PathVariable("id") String id, Principal principal, Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
