@@ -12,4 +12,6 @@ public interface OrderRepository extends MongoRepository<Order, String> {
     List<Order> findByUserIdOrderByOrderDateDesc(String userId);
 
     List<Order> findAllByOrderByOrderDateDesc();
+
+    java.util.Optional<Order> findByMomoRequestId(String momoRequestId);
 }

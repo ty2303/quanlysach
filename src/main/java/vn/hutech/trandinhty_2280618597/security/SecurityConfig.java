@@ -37,6 +37,9 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers("/books", "/books/search").permitAll()
                                                 .requestMatchers("/api/books", "/api/books/**").permitAll()
+                                                // MoMo callback endpoints - must be public
+                                                .requestMatchers("/checkout/momo/return", "/checkout/momo/ipn")
+                                                .permitAll()
                                                 // Admin only - quản lý sách và danh mục
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .requestMatchers("/books/new", "/books/edit/**", "/books/delete/**",
@@ -45,8 +48,10 @@ public class SecurityConfig {
                                                 .requestMatchers("/categories/new", "/categories/edit/**",
                                                                 "/categories/delete/**", "/categories/update")
                                                 .hasRole("ADMIN")
-                                                // User only - giỏ hàng và đơn hàng (ADMIN không được truy cập)
-                                                .requestMatchers("/cart/**", "/orders/**").hasRole("USER")
+                                                // User only - giỏ hàng, checkout và đơn hàng (ADMIN không được truy
+                                                // cập)
+                                                .requestMatchers("/cart/**", "/checkout/**", "/orders/**")
+                                                .hasRole("USER")
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
@@ -59,7 +64,7 @@ public class SecurityConfig {
                                                 .logoutSuccessUrl("/login?logout=true")
                                                 .permitAll())
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/api/**"));
+                                                .ignoringRequestMatchers("/api/**", "/checkout/momo/ipn"));
 
                 return http.build();
         }

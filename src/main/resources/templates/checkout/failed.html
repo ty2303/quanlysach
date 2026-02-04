@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Thanh toán thất bại - Quản lý Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 70px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e4e4e4;
+        }
+
+        .failed-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .failed-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .failed-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .error-box {
+            background: rgba(255, 65, 108, 0.1);
+            border: 1px solid rgba(255, 65, 108, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book me-2"></i>Quản lý Sách</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Sách</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container failed-container">
+        <div class="failed-card">
+            <div class="failed-icon">
+                <i class="fas fa-times fa-3x text-white"></i>
+            </div>
+
+            <h2 class="mb-3">Thanh toán thất bại!</h2>
+            <p class="text-muted mb-4">Rất tiếc, giao dịch của bạn không thành công.</p>
+
+            <div class="error-box" th:if="${error != null}">
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    <span th:text="${error}">Lỗi không xác định</span>
+                </div>
+                <small class="d-block mt-2 text-muted" th:if="${errorCode != null}">
+                    Mã lỗi: <span th:text="${errorCode}">-</span>
+                </small>
+            </div>
+
+            <div class="error-box" th:if="${error == null}">
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    <span>Giao dịch đã bị hủy hoặc hết thời gian</span>
+                </div>
+            </div>
+
+            <div class="alert alert-info bg-transparent border-info text-info mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                Bạn có thể thử lại hoặc chọn phương thức thanh toán khác.
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center mt-4">
+                <a th:href="@{/cart}" class="btn btn-outline-custom">
+                    <i class="fas fa-shopping-cart me-2"></i>Về giỏ hàng
+                </a>
+                <a th:href="@{/checkout}" class="btn btn-retry">
+                    <i class="fas fa-redo me-2"></i>Thử lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

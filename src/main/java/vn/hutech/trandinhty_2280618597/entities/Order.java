@@ -38,7 +38,34 @@ public class Order {
     @Field("status")
     private String status;
 
+    // Payment fields
+    @Field("paymentMethod")
+    private String paymentMethod;
+
+    @Field("paymentStatus")
+    private String paymentStatus;
+
+    @Field("momoTransId")
+    private String momoTransId;
+
+    @Field("momoRequestId")
+    private String momoRequestId;
+
+    @Field("paymentDate")
+    private LocalDateTime paymentDate;
+
+    // Order status constants
     public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_CONFIRMED = "CONFIRMED";
     public static final String STATUS_COMPLETED = "COMPLETED";
     public static final String STATUS_CANCELLED = "CANCELLED";
+
+    // Payment method constants
+    public static final String PAYMENT_METHOD_COD = "COD";
+    public static final String PAYMENT_METHOD_MOMO = "MOMO";
+
+    // Payment status constants
+    public static final String PAYMENT_STATUS_PENDING = "PENDING";
+    public static final String PAYMENT_STATUS_PAID = "PAID";
+    public static final String PAYMENT_STATUS_FAILED = "FAILED";
 }

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Thanh toán - Quản lý Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 70px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e4e4e4;
+        }
+
+        .checkout-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .checkout-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+        }
+
+        .item-row {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .payment-method input[type="radio"] {
+            display: none;
+        }
+
+        .momo-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a50064 0%, #d82d8b 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+
+        .cod-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book me-2"></i>Quản lý Sách</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Sách</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container checkout-container">
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-lg-5 mb-4">
+                <div class="order-summary">
+                    <h5 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của bạn</h5>
+
+                    <div th:each="item : ${cart.items}" class="item-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span th:text="${item.book.title}">Tên sách</span>
+                                <small class="d-block opacity-75">x<span th:text="${item.quantity}">1</span></small>
+                            </div>
+                            <span th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">0
+                                đ</span>
+                        </div>
+                    </div>
+
+                    <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Tổng cộng:</span>
+                        <span class="total-amount"
+                            th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0
+                            đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="col-lg-7">
+                <div class="checkout-card">
+                    <h4 class="mb-4"><i class="fas fa-credit-card me-2"></i>Phương thức thanh toán</h4>
+
+                    <form th:action="@{/checkout}" method="post" id="checkoutForm">
+                        <!-- MoMo Payment -->
+                        <label class="payment-method d-flex align-items-center mb-3" id="momoMethod">
+                            <input type="radio" name="paymentMethod" value="MOMO">
+                            <div class="momo-logo me-3">
+                                <span>M</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Ví MoMo</h6>
+                                <small class="opacity-75">Thanh toán qua ví điện tử MoMo</small>
+                            </div>
+                            <i class="fas fa-check-circle text-success opacity-0" id="momoCheck"></i>
+                        </label>
+
+                        <!-- COD Payment -->
+                        <label class="payment-method d-flex align-items-center mb-4" id="codMethod">
+                            <input type="radio" name="paymentMethod" value="COD" checked>
+                            <div class="cod-icon me-3">
+                                <i class="fas fa-money-bill-wave text-white fa-lg"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Thanh toán khi nhận hàng (COD)</h6>
+                                <small class="opacity-75">Thanh toán bằng tiền mặt khi nhận hàng</small>
+                            </div>
+                            <i class="fas fa-check-circle text-success" id="codCheck"></i>
+                        </label>
+
+                        <div class="alert alert-info bg-transparent border-info text-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span id="paymentNote">Bạn sẽ thanh toán khi nhận hàng.</span>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <a th:href="@{/cart}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-checkout flex-grow-1">
+                                <i class="fas fa-lock me-2"></i>Xác nhận thanh toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const momoMethod = document.getElementById('momoMethod');
+            const codMethod = document.getElementById('codMethod');
+            const momoRadio = momoMethod.querySelector('input');
+            const codRadio = codMethod.querySelector('input');
+            const momoCheck = document.getElementById('momoCheck');
+            const codCheck = document.getElementById('codCheck');
+            const paymentNote = document.getElementById('paymentNote');
+
+            function updateSelection() {
+                if (momoRadio.checked) {
+                    momoMethod.classList.add('selected');
+                    codMethod.classList.remove('selected');
+                    momoCheck.classList.remove('opacity-0');
+                    codCheck.classList.add('opacity-0');
+                    paymentNote.textContent = 'Bạn sẽ được chuyển đến MoMo để hoàn tất thanh toán.';
+                } else {
+                    codMethod.classList.add('selected');
+                    momoMethod.classList.remove('selected');
+                    codCheck.classList.remove('opacity-0');
+                    momoCheck.classList.add('opacity-0');
+                    paymentNote.textContent = 'Bạn sẽ thanh toán khi nhận hàng.';
+                }
+            }
+
+            momoRadio.addEventListener('change', updateSelection);
+            codRadio.addEventListener('change', updateSelection);
+
+            // Initial state
+            updateSelection();
+        });
+    </script>
+</body>
+
+</html>
