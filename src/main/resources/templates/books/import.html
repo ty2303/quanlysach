@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Import Sách - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/admin}"><i class="fas fa-book-reader me-2"></i>Admin Panel</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/books}">Quản lý Sách</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/categories}">Danh mục</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="fas fa-file-excel me-2"></i>Import Sách từ Excel</h4>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${errorMessage}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${errorMessage}">Error message</span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>Hướng dẫn định dạng File Excel:</h5>
+                            <p class="mb-1">Cấu trúc file (bắt đầu từ dòng 2):</p>
+                            <ul>
+                                <li><strong>Cột 1:</strong> Tên sách (Title)</li>
+                                <li><strong>Cột 2:</strong> Tác giả (Author)</li>
+                                <li><strong>Cột 3:</strong> Giá (Price) - Số</li>
+                                <li><strong>Cột 4:</strong> Tên danh mục (Category) - Phải chính xác</li>
+                                <li><strong>Cột 5:</strong> Đường dẫn ảnh trên máy (Ví dụ:
+                                    <code>D:\images\book1.jpg</code>)
+                                </li>
+                                <li><strong>Cột 6:</strong> Mô tả (Description)</li>
+                            </ul>
+                            <div class="mt-3">
+                                <a th:href="@{/books/import/sample}" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-download me-2"></i>Tải file mẫu
+                                </a>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/books/import}" method="post" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="excelFile" class="form-label fw-bold">Chọn file Excel (.xlsx)</label>
+                                <input type="file" class="form-control" id="excelFile" name="excelFile" accept=".xlsx"
+                                    required>
+                                <div class="form-text">Chỉ chấp nhận file định dạng .xlsx</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/admin/books}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-upload me-2"></i>Tiến hành Import
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

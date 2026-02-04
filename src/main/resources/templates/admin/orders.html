@@ -385,67 +385,51 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Item image carousel modal trigger or small carousel -->
-                    <!-- For simplicity in list view, we might keep it simple or add a modal. 
-                          But user asked for "impression detail order can view multiple images". 
-                          This is likely for the detail view. 
-                          
-                          Wait, the USER REQUEST was: "cho admin và user thì ấn vào chi tiết đơn hàng có thể xem nhìu ảnh cảu 1 sản phẩm"
-                          
-                          This is orders.html (Backoffice List). I need to check if there is an order detail for Admin.
-                          The current file viewed is `admin/orders.html` which is a LIST.
-                          There is NO `admin/order-detail.html`. I need to CREATE one or update `orders/detail.html` (which is for user) to be accessible/used by admin or check if admin has one.
-                          
-                          Based on file list, `orders/detail.html` exists. Admin might not have a separate detail view yet or uses the same?
-                          The controller for admin orders usually is AdminController.
-                      -->
-
-                    <!-- Let's check AdminController to see how it handles order details -->
-                    <!-- Pending further investigation on Admin Order Detail view. For now, I will update User Order Detail first. -->
-                    <td>
-                        <code th:text="${#strings.substring(order.id, 0, 8)} + '...'"></code>
-                    </td>
-                    <td>
-                        <i class="fas fa-user user-icon"></i>
-                        <span th:text="${order.username}">User</span>
-                    </td>
-                    <td th:text="${order.items.size()}">0</td>
-                    <td class="order-total"
-                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ
-                    </td>
-                    <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
-                    <td>
-                        <span class="badge-status badge-pending" th:if="${order.status == 'PENDING'}">
-                            <i class="fas fa-clock me-1"></i>Chờ xử lý
-                        </span>
-                        <span class="badge-status badge-confirmed" th:if="${order.status == 'CONFIRMED'}">
-                            <i class="fas fa-thumbs-up me-1"></i>Đã xác nhận
-                        </span>
-                        <span class="badge-status badge-completed" th:if="${order.status == 'COMPLETED'}">
-                            <i class="fas fa-check-circle me-1"></i>Hoàn thành
-                        </span>
-                        <span class="badge-status badge-cancelled" th:if="${order.status == 'CANCELLED'}">
-                            <i class="fas fa-times-circle me-1"></i>Đã hủy
-                        </span>
-                    </td>
-                    <td>
-                        <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post"
-                            class="d-flex gap-2 align-items-center">
-                            <select name="status" class="status-select">
-                                <option value="PENDING" th:selected="${order.status == 'PENDING'}">Chờ xử lý
-                                </option>
-                                <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">Đã xác nhận
-                                </option>
-                                <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Hoàn thành
-                                </option>
-                                <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Đã hủy
-                                </option>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-update">
-                                <i class="fas fa-save"></i>
-                            </button>
-                        </form>
-                    </td>
+                    <tr th:each="order : ${orders}">
+                        <td>
+                            <code th:text="${#strings.substring(order.id, 0, 8)} + '...'"></code>
+                        </td>
+                        <td>
+                            <i class="fas fa-user user-icon"></i>
+                            <span th:text="${order.username}">User</span>
+                        </td>
+                        <td th:text="${order.items.size()}">0</td>
+                        <td class="order-total"
+                            th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ
+                        </td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                        <td>
+                            <span class="badge-status badge-pending" th:if="${order.status == 'PENDING'}">
+                                <i class="fas fa-clock me-1"></i>Chờ xử lý
+                            </span>
+                            <span class="badge-status badge-confirmed" th:if="${order.status == 'CONFIRMED'}">
+                                <i class="fas fa-thumbs-up me-1"></i>Đã xác nhận
+                            </span>
+                            <span class="badge-status badge-completed" th:if="${order.status == 'COMPLETED'}">
+                                <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                            </span>
+                            <span class="badge-status badge-cancelled" th:if="${order.status == 'CANCELLED'}">
+                                <i class="fas fa-times-circle me-1"></i>Đã hủy
+                            </span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post"
+                                class="d-flex gap-2 align-items-center">
+                                <select name="status" class="status-select">
+                                    <option value="PENDING" th:selected="${order.status == 'PENDING'}">Chờ xử lý
+                                    </option>
+                                    <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">Đã xác nhận
+                                    </option>
+                                    <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Hoàn thành
+                                    </option>
+                                    <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Đã hủy
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-update">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(orders)}">
                         <td colspan="7">

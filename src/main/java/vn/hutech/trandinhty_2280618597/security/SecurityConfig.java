@@ -36,10 +36,11 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authz -> authz
                                                 // Public access
                                                 .requestMatchers("/", "/register", "/register-admin", "/login",
-                                                                "/css/**", "/js/**", "/images/**")
+                                                                "/css/**", "/js/**", "/images/**", "/uploads/**")
                                                 .permitAll()
                                                 .requestMatchers("/books", "/books/search").permitAll()
-                                                .requestMatchers("/api/books", "/api/books/**").permitAll()
+                                                .requestMatchers("/api/books", "/api/books/**", "/api/chat/**")
+                                                .permitAll()
                                                 // MoMo callback endpoints - must be public
                                                 .requestMatchers("/checkout/momo/return", "/checkout/momo/ipn")
                                                 .permitAll()

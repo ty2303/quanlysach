@@ -44,4 +44,24 @@ public class FileStorageService {
             throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
+
+    // Overload for java.io.File (used in Excel Import)
+    public String storeFile(java.io.File file) {
+        String fileName = StringUtils.cleanPath(file.getName());
+
+        try {
+            if (fileName.contains("..")) {
+                throw new RuntimeException("Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            String newFileName = UUID.randomUUID().toString() + "_" + fileName;
+            Path targetLocation = this.fileStorageLocation.resolve(newFileName);
+            // Copy file from local path to uploads directory
+            Files.copy(file.toPath(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return newFileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+    }
 }

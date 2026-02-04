@@ -76,37 +76,30 @@ public class BookController {
     @Autowired
     private vn.hutech.trandinhty_2280618597.services.FileStorageService fileStorageService;
 
-    // POST mappings
     @PostMapping
     public String createBook(@ModelAttribute Book book,
-            @RequestParam(value = "imageUrls", required = false) String imageUrlsStr,
             @RequestParam(value = "imageFiles", required = false) org.springframework.web.multipart.MultipartFile[] imageFiles) {
-        processImageUrls(book, imageUrlsStr, imageFiles);
+        processImageUrls(book, null, imageFiles);
         bookService.saveBook(book);
         return "redirect:/admin/books";
     }
 
     @PostMapping("/update")
     public String updateBook(@ModelAttribute Book book,
-            @RequestParam(value = "imageUrls", required = false) String imageUrlsStr,
+            @RequestParam(value = "keptImageUrls", required = false) List<String> keptImageUrls,
             @RequestParam(value = "imageFiles", required = false) org.springframework.web.multipart.MultipartFile[] imageFiles) {
-        processImageUrls(book, imageUrlsStr, imageFiles);
+        processImageUrls(book, keptImageUrls, imageFiles);
         bookService.saveBook(book);
         return "redirect:/admin/books";
     }
 
-    private void processImageUrls(Book book, String imageUrlsStr,
+    private void processImageUrls(Book book, List<String> keptImageUrls,
             org.springframework.web.multipart.MultipartFile[] imageFiles) {
-        List<String> urls = new java.util.ArrayList<>();
+        List<String> finalUrls = new java.util.ArrayList<>();
 
-        // 1. Giữ lại các URL cũ (từ textarea)
-        if (imageUrlsStr != null && !imageUrlsStr.trim().isEmpty()) {
-            String[] lines = imageUrlsStr.split("\\r?\\n");
-            for (String line : lines) {
-                if (!line.trim().isEmpty()) {
-                    urls.add(line.trim());
-                }
-            }
+        // 1. Giữ lại các URL cũ (nếu có)
+        if (keptImageUrls != null && !keptImageUrls.isEmpty()) {
+            finalUrls.addAll(keptImageUrls);
         }
 
         // 2. Thêm các file mới upload
@@ -116,7 +109,7 @@ public class BookController {
                     try {
                         String fileName = fileStorageService.storeFile(file);
                         // Thêm đường dẫn file vào list (có prefix /uploads/)
-                        urls.add("/uploads/" + fileName);
+                        finalUrls.add("/uploads/" + fileName);
                     } catch (Exception e) {
                         e.printStackTrace(); // Log lỗi nếu upload thất bại
                     }
@@ -125,8 +118,57 @@ public class BookController {
         }
 
         // 3. Cập nhật vào book
-        if (!urls.isEmpty() || imageUrlsStr != null) {
-            book.setImageUrls(urls);
+        book.setImageUrls(finalUrls);
+    }
+
+    // Import Excel
+    @Autowired
+    private vn.hutech.trandinhty_2280618597.services.BookImportService bookImportService;
+
+    @GetMapping("/import")
+    public String showImportForm() {
+        return "books/import";
+    }
+
+    @PostMapping("/import")
+    public String importBooks(@RequestParam("excelFile") org.springframework.web.multipart.MultipartFile excelFile,
+            Model model) {
+        try {
+            bookImportService.importBooks(excelFile);
+            return "redirect:/admin/books";
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Lỗi khi import file: " + e.getMessage());
+            return "books/import";
         }
     }
+
+    @GetMapping("/import/sample")
+    public void downloadSampleExcel(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=books_sample.xlsx");
+
+        try (org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Books");
+
+            // Header
+            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+            String[] columns = { "Title", "Author", "Price", "Category", "LocalImagePath", "Description" };
+            for (int i = 0; i < columns.length; i++) {
+                headerRow.createCell(i).setCellValue(columns[i]);
+            }
+
+            // Sample Data
+            org.apache.poi.ss.usermodel.Row sampleRow = sheet.createRow(1);
+            sampleRow.createCell(0).setCellValue("Clean Code");
+            sampleRow.createCell(1).setCellValue("Robert C. Martin");
+            sampleRow.createCell(2).setCellValue(500000);
+            sampleRow.createCell(3).setCellValue("Technology");
+            sampleRow.createCell(4).setCellValue("D:\\images\\clean_code.jpg");
+            sampleRow.createCell(5).setCellValue("A Handbook of Agile Software Craftsmanship");
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+
 }
