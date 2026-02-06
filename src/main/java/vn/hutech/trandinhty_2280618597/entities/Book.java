@@ -34,6 +34,9 @@ public class Book {
     @Field("description")
     private String description;
 
+    @Field("quantity")
+    private Integer quantity = 0;
+
     @Field("images")
     private List<String> imageUrls = new ArrayList<>();
 

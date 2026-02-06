@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -40,7 +41,7 @@ public class BookImportService {
 
                 // Configure cell mapping:
                 // 0: Title, 1: Author, 2: Price, 3: CategoryName, 4: ImagePath (Local), 5:
-                // Description
+                // Description, 6: Quantity
 
                 Book book = new Book();
 
@@ -90,6 +91,21 @@ public class BookImportService {
                 // Description
                 if (row.getCell(5) != null)
                     book.setDescription(row.getCell(5).getStringCellValue());
+
+                // Quantity (Số lượng tồn kho)
+                if (row.getCell(6) != null) {
+                    if (row.getCell(6).getCellType() == CellType.NUMERIC) {
+                        book.setQuantity((int) row.getCell(6).getNumericCellValue());
+                    } else if (row.getCell(6).getCellType() == CellType.STRING) {
+                        try {
+                            book.setQuantity(Integer.parseInt(row.getCell(6).getStringCellValue()));
+                        } catch (NumberFormatException e) {
+                            book.setQuantity(0);
+                        }
+                    }
+                } else {
+                    book.setQuantity(0);
+                }
 
                 bookService.saveBook(book);
             }

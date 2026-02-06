@@ -54,6 +54,16 @@ public class Order {
     @Field("paymentDate")
     private LocalDateTime paymentDate;
 
+    // Voucher fields
+    @Field("voucherCode")
+    private String voucherCode;
+
+    @Field("discountAmount")
+    private double discountAmount = 0;
+
+    @Field("originalAmount")
+    private double originalAmount; // Tổng tiền gốc trước khi giảm
+
     // Order status constants
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_CONFIRMED = "CONFIRMED";

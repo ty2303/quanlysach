@@ -339,12 +339,17 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
                         <label for="price" class="form-label">Giá (VNĐ) <span>*</span></label>
                         <input type="number" class="form-control" id="price" th:field="*{price}" step="1000" min="0"
                             required placeholder="0">
                     </div>
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
+                        <label for="quantity" class="form-label">Số lượng tồn kho</label>
+                        <input type="number" class="form-control" id="quantity" th:field="*{quantity}" min="0"
+                            placeholder="0">
+                    </div>
+                    <div class="col-md-4 mb-4">
                         <label for="category" class="form-label">Danh mục</label>
                         <select class="form-select" id="category" th:field="*{category}">
                             <option value="">-- Chọn danh mục --</option>

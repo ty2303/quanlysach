@@ -448,6 +448,12 @@
                     <span>Đơn hàng</span>
                 </a>
             </li>
+            <li>
+                <a th:href="@{/admin/vouchers}">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Mã giảm giá</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a th:href="@{/}">
@@ -524,15 +530,15 @@
                                 <tr th:each="book : ${recentBooks}">
                                     <td th:text="${book.title}">Tên sách</td>
                                     <td th:text="${book.author}">Tác giả</td>
-                                    <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ
+                                    <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0
+                                        đ
                                     </td>
                                     <td>
-                                        <a th:href="@{/books/edit/{id}(id=${book.id})}"
-                                            class="btn btn-sm btn-warning">
+                                        <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Sửa
                                         </a>
-                                        <a th:href="@{/books/delete/{id}(id=${book.id})}"
-                                            class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa sách này?')">
+                                        <a th:href="@{/books/delete/{id}(id=${book.id})}" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Bạn có chắc muốn xóa sách này?')">
                                             <i class="fas fa-trash"></i> Xóa
                                         </a>
                                     </td>
@@ -568,7 +574,8 @@
                                     <td>
                                         <span class="badge-status badge-completed"
                                             th:if="${order.status == 'COMPLETED'}">Hoàn thành</span>
-                                        <span class="badge-status badge-pending" th:if="${order.status == 'PENDING'}">Đang
+                                        <span class="badge-status badge-pending"
+                                            th:if="${order.status == 'PENDING'}">Đang
                                             xử lý</span>
                                     </td>
                                 </tr>
@@ -587,7 +594,8 @@
             <h2><i class="fas fa-folder"></i> Danh mục sản phẩm</h2>
             <div class="row">
                 <div class="col-md-3 col-sm-6 mb-3" th:each="cat : ${categories}">
-                    <a th:href="@{/admin/categories}" class="quick-action-btn" style="flex-direction: column; text-align: center; justify-content: center;">
+                    <a th:href="@{/admin/categories}" class="quick-action-btn"
+                        style="flex-direction: column; text-align: center; justify-content: center;">
                         <i class="fas fa-folder-open" style="font-size: 2rem;"></i>
                         <div class="text mt-2">
                             <div class="title" th:text="${cat.name}">Danh mục</div>

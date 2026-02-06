@@ -46,4 +46,8 @@ public class BookService {
         return bookRepository.findAll(org.springframework.data.domain.PageRequest.of(pageNo, pageSize,
                 org.springframework.data.domain.Sort.by(sortBy)));
     }
+
+    public void deleteBooksByCategoryId(String categoryId) {
+        bookRepository.deleteByCategoryId(categoryId);
+    }
 }

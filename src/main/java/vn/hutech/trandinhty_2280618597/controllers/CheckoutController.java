@@ -21,6 +21,7 @@ import vn.hutech.trandinhty_2280618597.services.CartService;
 import vn.hutech.trandinhty_2280618597.services.MoMoService;
 import vn.hutech.trandinhty_2280618597.services.OrderService;
 import vn.hutech.trandinhty_2280618597.services.UserService;
+import vn.hutech.trandinhty_2280618597.services.VoucherService;
 
 @Controller
 @RequestMapping("/checkout")
@@ -40,6 +41,9 @@ public class CheckoutController {
 
     @Autowired
     private MoMoConfig moMoConfig;
+
+    @Autowired
+    private VoucherService voucherService;
 
     /**
      * Display checkout page with payment method selection
@@ -65,10 +69,55 @@ public class CheckoutController {
     }
 
     /**
+     * API áp dụng voucher (AJAX)
+     */
+    @PostMapping("/apply-voucher")
+    @ResponseBody
+    public Map<String, Object> applyVoucher(@RequestParam("voucherCode") String voucherCode, Principal principal) {
+        Map<String, Object> response = new java.util.HashMap<>();
+
+        if (principal == null) {
+            response.put("success", false);
+            response.put("message", "Vui lòng đăng nhập!");
+            return response;
+        }
+
+        User user = userService.findByUsername(principal.getName()).orElse(null);
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "Không tìm thấy người dùng!");
+            return response;
+        }
+
+        Cart cart = cartService.getCart(user.getId());
+        double orderAmount = cart.getTotalAmount();
+
+        String validationError = voucherService.validateVoucher(voucherCode, orderAmount);
+        if (validationError != null) {
+            response.put("success", false);
+            response.put("message", validationError);
+            return response;
+        }
+
+        double discount = voucherService.calculateDiscount(voucherCode, orderAmount);
+        double finalAmount = orderAmount - discount;
+
+        response.put("success", true);
+        response.put("message", "Áp dụng mã giảm giá thành công!");
+        response.put("discount", discount);
+        response.put("finalAmount", finalAmount);
+        response.put("originalAmount", orderAmount);
+
+        return response;
+    }
+
+    /**
      * Process checkout with selected payment method
      */
     @PostMapping
-    public String processCheckout(@RequestParam("paymentMethod") String paymentMethod, Principal principal) {
+    public String processCheckout(@RequestParam("paymentMethod") String paymentMethod,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            Principal principal) {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -83,11 +132,12 @@ public class CheckoutController {
             return "redirect:/cart";
         }
 
-        // Create order with selected payment method
-        Order order = orderService.createOrderWithPaymentMethod(
+        // Create order with selected payment method and voucher
+        Order order = orderService.createOrderWithVoucher(
                 user.getId(),
                 user.getUsername(),
-                paymentMethod);
+                paymentMethod,
+                voucherCode);
 
         if (order == null) {
             return "redirect:/cart?error=empty";

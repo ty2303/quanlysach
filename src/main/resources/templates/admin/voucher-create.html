@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tạo mã giảm giá - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #4a90e2 0%, #357abd 100%);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .sidebar-brand i {
+            color: #fff;
+            margin-right: 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 1rem;
+        }
+
+        .sidebar-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-footer a {
+            display: block;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 25px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        .header h1 i {
+            color: #4a90e2;
+            margin-right: 10px;
+        }
+
+        .form-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8e8;
+            max-width: 700px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .form-text {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .discount-type-card {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .discount-type-card:hover {
+            border-color: #4a90e2;
+        }
+
+        .discount-type-card.selected {
+            border-color: #4a90e2;
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        .discount-type-card i {
+            font-size: 2rem;
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        .discount-type-card input[type="radio"] {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+
+            .sidebar-brand span,
+            .sidebar-menu span,
+            .sidebar-footer span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body sec:authorize="hasRole('ADMIN')">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-book-open"></i>
+            <span>Admin Panel</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a th:href="@{/admin}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/books}">
+                    <i class="fas fa-book"></i>
+                    <span>Quản lý Sách</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/categories}">
+                    <i class="fas fa-folder"></i>
+                    <span>Danh mục</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/orders}">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Đơn hàng</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/vouchers}" class="active">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Mã giảm giá</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a th:href="@{/}">
+                <i class="fas fa-home"></i>
+                <span>Về Trang chủ</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h1><i class="fas fa-plus-circle"></i> Tạo Mã Giảm Giá Mới</h1>
+        </div>
+
+        <!-- Alert messages -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="form-card">
+            <form th:action="@{/admin/vouchers/create}" method="post" th:object="${voucher}">
+                <!-- Mã voucher -->
+                <div class="mb-4">
+                    <label class="form-label">Mã voucher <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{code}" placeholder="VD: SALE10, NEWYEAR2024"
+                        required style="text-transform: uppercase;" maxlength="20">
+                    <div class="form-text">Mã sẽ được tự động chuyển thành chữ hoa</div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="mb-4">
+                    <label class="form-label">Mô tả</label>
+                    <input type="text" class="form-control" th:field="*{description}"
+                        placeholder="VD: Giảm giá mừng năm mới">
+                </div>
+
+                <!-- Loại giảm giá -->
+                <div class="mb-4">
+                    <label class="form-label">Loại giảm giá <span class="text-danger">*</span></label>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="discount-type-card w-100" id="percentCard">
+                                <input type="radio" th:field="*{discountType}" value="PERCENT" checked>
+                                <i class="fas fa-percent d-block"></i>
+                                <strong>Phần trăm</strong>
+                                <div class="small text-muted">Giảm theo %</div>
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            <label class="discount-type-card w-100" id="fixedCard">
+                                <input type="radio" th:field="*{discountType}" value="FIXED">
+                                <i class="fas fa-money-bill d-block"></i>
+                                <strong>Số tiền cố định</strong>
+                                <div class="small text-muted">Giảm theo VNĐ</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Giá trị giảm -->
+                <div class="mb-4">
+                    <label class="form-label">Giá trị giảm <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" th:field="*{discountValue}" placeholder="10" required
+                            min="0" step="0.01">
+                        <span class="input-group-text" id="discountUnit">%</span>
+                    </div>
+                </div>
+
+                <!-- Giảm tối đa (cho PERCENT) -->
+                <div class="mb-4" id="maxDiscountField">
+                    <label class="form-label">Giảm tối đa (VNĐ)</label>
+                    <input type="number" class="form-control" th:field="*{maxDiscount}" placeholder="100000" min="0">
+                    <div class="form-text">Chỉ áp dụng cho loại "Phần trăm". Để trống nếu không giới hạn.</div>
+                </div>
+
+                <!-- Đơn hàng tối thiểu -->
+                <div class="mb-4">
+                    <label class="form-label">Đơn hàng tối thiểu (VNĐ)</label>
+                    <input type="number" class="form-control" th:field="*{minOrderAmount}" placeholder="0" min="0">
+                    <div class="form-text">Giá trị đơn hàng tối thiểu để áp dụng mã</div>
+                </div>
+
+                <!-- Số lần sử dụng -->
+                <div class="mb-4">
+                    <label class="form-label">Số lần sử dụng tối đa</label>
+                    <input type="number" class="form-control" th:field="*{usageLimit}"
+                        placeholder="Để trống = không giới hạn" min="1">
+                </div>
+
+                <!-- Ngày bắt đầu và kết thúc -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Ngày bắt đầu</label>
+                        <input type="datetime-local" class="form-control" th:field="*{startDate}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ngày kết thúc</label>
+                        <input type="datetime-local" class="form-control" th:field="*{endDate}">
+                    </div>
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" th:field="*{active}" id="activeSwitch">
+                        <label class="form-check-label" for="activeSwitch">Kích hoạt ngay</label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-3 mt-4">
+                    <a th:href="@{/admin/vouchers}" class="btn btn-back">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-save me-2"></i>Tạo Voucher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const percentCard = document.getElementById('percentCard');
+            const fixedCard = document.getElementById('fixedCard');
+            const discountUnit = document.getElementById('discountUnit');
+            const maxDiscountField = document.getElementById('maxDiscountField');
+            const percentRadio = percentCard.querySelector('input');
+            const fixedRadio = fixedCard.querySelector('input');
+
+            function updateUI() {
+                if (percentRadio.checked) {
+                    percentCard.classList.add('selected');
+                    fixedCard.classList.remove('selected');
+                    discountUnit.textContent = '%';
+                    maxDiscountField.style.display = 'block';
+                } else {
+                    fixedCard.classList.add('selected');
+                    percentCard.classList.remove('selected');
+                    discountUnit.textContent = 'VNĐ';
+                    maxDiscountField.style.display = 'none';
+                }
+            }
+
+            percentRadio.addEventListener('change', updateUI);
+            fixedRadio.addEventListener('change', updateUI);
+
+            // Initial state
+            updateUI();
+        });
+    </script>
+</body>
+
+</html>

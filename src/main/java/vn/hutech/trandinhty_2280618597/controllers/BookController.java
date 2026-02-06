@@ -153,7 +153,7 @@ public class BookController {
 
             // Header
             org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
-            String[] columns = { "Title", "Author", "Price", "Category", "LocalImagePath", "Description" };
+            String[] columns = { "Title", "Author", "Price", "Category", "LocalImagePath", "Description", "Quantity" };
             for (int i = 0; i < columns.length; i++) {
                 headerRow.createCell(i).setCellValue(columns[i]);
             }
@@ -166,6 +166,7 @@ public class BookController {
             sampleRow.createCell(3).setCellValue("Technology");
             sampleRow.createCell(4).setCellValue("D:\\images\\clean_code.jpg");
             sampleRow.createCell(5).setCellValue("A Handbook of Agile Software Craftsmanship");
+            sampleRow.createCell(6).setCellValue(100); // Quantity
 
             workbook.write(response.getOutputStream());
         }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Đơn hàng - Admin</title>
+    <title>Mã giảm giá - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -132,14 +132,20 @@
             margin-right: 10px;
         }
 
-        .header-info {
-            color: #555;
-            font-size: 0.95rem;
+        .btn-create {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .header-info strong {
-            color: #4a90e2;
-            font-size: 1.1rem;
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
         }
 
         .card-section {
@@ -177,18 +183,14 @@
             background: #f8f9fa;
         }
 
-        .table-custom code {
-            background: #f8f9fa;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            color: #666;
-            border: 1px solid #e0e0e0;
-        }
-
-        .table-custom .user-icon {
-            color: #6c757d;
-            margin-right: 8px;
+        .voucher-code {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
         }
 
         .badge-status {
@@ -198,52 +200,45 @@
             font-weight: 500;
         }
 
-        .badge-completed {
+        .badge-active {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
 
-        .badge-pending {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .badge-confirmed {
-            background: #cce5ff;
-            color: #004085;
-            border: 1px solid #b8daff;
-        }
-
-        .badge-cancelled {
+        .badge-inactive {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
 
-        .status-select {
-            padding: 5px 10px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            font-size: 0.85rem;
-            background: white;
+        .badge-percent {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
         }
 
-        .btn-update {
-            padding: 5px 12px;
-            font-size: 0.85rem;
+        .badge-fixed {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .discount-value {
+            color: #28a745;
+            font-weight: 700;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
             border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 5px;
         }
 
         .alert {
             border-radius: 8px;
             margin-bottom: 20px;
-        }
-
-        .order-total {
-            color: #28a745;
-            font-weight: 700;
         }
 
         .empty-state {
@@ -256,6 +251,16 @@
             font-size: 4rem;
             margin-bottom: 20px;
             color: #dee2e6;
+        }
+
+        .usage-info {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .date-info {
+            font-size: 0.85rem;
+            color: #888;
         }
 
         /* Responsive */
@@ -295,17 +300,6 @@
                 gap: 15px;
             }
         }
-
-        @media (max-width: 768px) {
-            .table-custom {
-                font-size: 0.85rem;
-            }
-
-            .table-custom th,
-            .table-custom td {
-                padding: 10px;
-            }
-        }
     </style>
 </head>
 
@@ -336,13 +330,13 @@
                 </a>
             </li>
             <li>
-                <a th:href="@{/admin/orders}" class="active">
+                <a th:href="@{/admin/orders}">
                     <i class="fas fa-shopping-bag"></i>
                     <span>Đơn hàng</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/admin/vouchers}">
+                <a th:href="@{/admin/vouchers}" class="active">
                     <i class="fas fa-ticket-alt"></i>
                     <span>Mã giảm giá</span>
                 </a>
@@ -359,10 +353,10 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="header">
-            <h1><i class="fas fa-shopping-bag"></i> Tất cả Đơn hàng</h1>
-            <div class="header-info">
-                Tổng: <strong th:text="${orders.size()}">0</strong> đơn hàng
-            </div>
+            <h1><i class="fas fa-ticket-alt"></i> Quản lý Mã giảm giá</h1>
+            <a th:href="@{/admin/vouchers/create}" class="btn btn-create">
+                <i class="fas fa-plus me-2"></i>Tạo mã mới
+            </a>
         </div>
 
         <!-- Alert messages -->
@@ -381,68 +375,93 @@
             <table class="table table-custom table-hover">
                 <thead>
                     <tr>
-                        <th>Mã đơn</th>
-                        <th>Khách hàng</th>
-                        <th>Số SP</th>
-                        <th>Tổng tiền</th>
-                        <th>Ngày đặt</th>
+                        <th>Mã voucher</th>
+                        <th>Loại</th>
+                        <th>Giá trị</th>
+                        <th>Đơn tối thiểu</th>
+                        <th>Sử dụng</th>
+                        <th>Thời hạn</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="order : ${orders}">
+                    <tr th:each="voucher : ${vouchers}">
                         <td>
-                            <code th:text="${#strings.substring(order.id, 0, 8)} + '...'"></code>
+                            <span class="voucher-code" th:text="${voucher.code}">CODE</span>
+                            <div class="mt-1 text-muted small" th:if="${voucher.description}"
+                                th:text="${voucher.description}"></div>
                         </td>
                         <td>
-                            <i class="fas fa-user user-icon"></i>
-                            <span th:text="${order.username}">User</span>
+                            <span class="badge-status badge-percent" th:if="${voucher.discountType == 'PERCENT'}">
+                                <i class="fas fa-percent me-1"></i>Phần trăm
+                            </span>
+                            <span class="badge-status badge-fixed" th:if="${voucher.discountType == 'FIXED'}">
+                                <i class="fas fa-money-bill me-1"></i>Cố định
+                            </span>
                         </td>
-                        <td th:text="${order.items.size()}">0</td>
-                        <td class="order-total"
-                            th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ
-                        </td>
-                        <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
-                        <td>
-                            <span class="badge-status badge-pending" th:if="${order.status == 'PENDING'}">
-                                <i class="fas fa-clock me-1"></i>Chờ xử lý
-                            </span>
-                            <span class="badge-status badge-confirmed" th:if="${order.status == 'CONFIRMED'}">
-                                <i class="fas fa-thumbs-up me-1"></i>Đã xác nhận
-                            </span>
-                            <span class="badge-status badge-completed" th:if="${order.status == 'COMPLETED'}">
-                                <i class="fas fa-check-circle me-1"></i>Hoàn thành
-                            </span>
-                            <span class="badge-status badge-cancelled" th:if="${order.status == 'CANCELLED'}">
-                                <i class="fas fa-times-circle me-1"></i>Đã hủy
-                            </span>
+                        <td class="discount-value">
+                            <span th:if="${voucher.discountType == 'PERCENT'}"
+                                th:text="${voucher.discountValue + '%'}">10%</span>
+                            <span th:if="${voucher.discountType == 'FIXED'}"
+                                th:text="${#numbers.formatDecimal(voucher.discountValue, 0, 'COMMA', 0, 'POINT')} + 'đ'">50,000đ</span>
+                            <div th:if="${voucher.maxDiscount != null}" class="small text-muted">
+                                Max: <span
+                                    th:text="${#numbers.formatDecimal(voucher.maxDiscount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                            </div>
                         </td>
                         <td>
-                            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post"
-                                class="d-flex gap-2 align-items-center">
-                                <select name="status" class="status-select">
-                                    <option value="PENDING" th:selected="${order.status == 'PENDING'}">Chờ xử lý
-                                    </option>
-                                    <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">Đã xác nhận
-                                    </option>
-                                    <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Hoàn thành
-                                    </option>
-                                    <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Đã hủy
-                                    </option>
-                                </select>
-                                <button type="submit" class="btn btn-primary btn-update">
-                                    <i class="fas fa-save"></i>
+                            <span
+                                th:text="${#numbers.formatDecimal(voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </td>
+                        <td class="usage-info">
+                            <span th:text="${voucher.usedCount}">0</span>
+                            <span th:if="${voucher.usageLimit != null}">
+                                / <span th:text="${voucher.usageLimit}">100</span>
+                            </span>
+                            <span th:if="${voucher.usageLimit == null}">/ ∞</span>
+                        </td>
+                        <td class="date-info">
+                            <div th:if="${voucher.startDate != null}">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                <span th:text="${#temporals.format(voucher.startDate, 'dd/MM/yyyy')}"></span>
+                            </div>
+                            <div th:if="${voucher.endDate != null}">
+                                đến <span th:text="${#temporals.format(voucher.endDate, 'dd/MM/yyyy')}"></span>
+                            </div>
+                            <span th:if="${voucher.startDate == null && voucher.endDate == null}">Không giới hạn</span>
+                        </td>
+                        <td>
+                            <span class="badge-status badge-active" th:if="${voucher.active}">
+                                <i class="fas fa-check me-1"></i>Hoạt động
+                            </span>
+                            <span class="badge-status badge-inactive" th:if="${!voucher.active}">
+                                <i class="fas fa-times me-1"></i>Tắt
+                            </span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/vouchers/{id}/toggle(id=${voucher.id})}" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-action"
+                                    th:classappend="${voucher.active ? 'btn-outline-warning' : 'btn-outline-success'}"
+                                    th:title="${voucher.active ? 'Tắt voucher' : 'Bật voucher'}">
+                                    <i th:class="${voucher.active ? 'fas fa-pause' : 'fas fa-play'}"></i>
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/vouchers/{id}/delete(id=${voucher.id})}" method="post"
+                                class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa mã này?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger btn-action" title="Xóa">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(orders)}">
-                        <td colspan="7">
+                    <tr th:if="${#lists.isEmpty(vouchers)}">
+                        <td colspan="8">
                             <div class="empty-state">
-                                <i class="fas fa-shopping-bag"></i>
-                                <h5 class="mt-3">Chưa có đơn hàng nào</h5>
-                                <p class="text-muted">Đơn hàng của khách hàng sẽ hiển thị ở đây</p>
+                                <i class="fas fa-ticket-alt"></i>
+                                <h5 class="mt-3">Chưa có mã giảm giá nào</h5>
+                                <p class="text-muted">Nhấn "Tạo mã mới" để tạo voucher đầu tiên</p>
                             </div>
                         </td>
                     </tr>

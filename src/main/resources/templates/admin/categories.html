@@ -341,6 +341,12 @@
                     <span>Đơn hàng</span>
                 </a>
             </li>
+            <li>
+                <a th:href="@{/admin/vouchers}">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Mã giảm giá</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a th:href="@{/}">
@@ -380,7 +386,7 @@
                                 <i class="fas fa-edit"></i> Sửa
                             </a>
                             <a th:href="@{/categories/delete/{id}(id=${cat.id})}" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">
+                                onclick="return confirm('⚠️ CẢNH BÁO: Xóa danh mục này sẽ xóa TẤT CẢ sách thuộc danh mục này! Bạn có chắc chắn muốn tiếp tục?')">
                                 <i class="fas fa-trash"></i> Xóa
                             </a>
                         </td>

@@ -344,6 +344,12 @@
                     <span>Đơn hàng</span>
                 </a>
             </li>
+            <li>
+                <a th:href="@{/admin/vouchers}">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Mã giảm giá</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a th:href="@{/}">
@@ -371,6 +377,7 @@
                         <th>Tác giả</th>
                         <th>Danh mục</th>
                         <th>Giá</th>
+                        <th>Tồn kho</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -384,6 +391,12 @@
                         <td th:text="${book.author}">Tác giả</td>
                         <td th:text="${book.category != null ? book.category.name : 'N/A'}">Danh mục</td>
                         <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</td>
+                        <td>
+                            <span th:if="${book.quantity != null and book.quantity > 0}" class="badge bg-success"
+                                th:text="${book.quantity}">0</span>
+                            <span th:if="${book.quantity == null or book.quantity <= 0}" class="badge bg-danger">Hết
+                                hàng</span>
+                        </td>
                         <td>
                             <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i> Sửa
