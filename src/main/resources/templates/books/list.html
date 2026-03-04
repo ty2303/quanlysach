@@ -81,6 +81,21 @@
             border-radius: 15px;
             font-size: 0.75rem;
         }
+
+        .out-of-stock-badge {
+            background: #dc3545;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .btn-out-of-stock {
+            background: #ccc;
+            border: none;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -144,6 +159,18 @@
     </nav>
 
     <div class="container">
+        <!-- Flash Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><i class="fas fa-book-open me-2"></i>Danh sách Sách</h2>
@@ -197,6 +224,17 @@
                         <div class="book-price mb-3"
                             th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
 
+                        <!-- Stock status -->
+                        <div class="mb-2" th:if="${book.quantity == null || book.quantity <= 0}">
+                            <span class="out-of-stock-badge">
+                                <i class="fas fa-times-circle me-1"></i>Hết hàng
+                            </span>
+                        </div>
+                        <div class="mb-2 text-success small" th:if="${book.quantity != null && book.quantity > 0}">
+                            <i class="fas fa-check-circle me-1"></i>Còn <span th:text="${book.quantity}"></span> sản
+                            phẩm
+                        </div>
+
                         <!-- Xem chi tiết: Ai cũng thấy -->
                         <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-outline-primary btn-sm w-100 mb-2">
                             <i class="fas fa-eye me-1"></i> Xem chi tiết
@@ -214,7 +252,16 @@
                         </div>
 
                         <!-- Add to cart: chỉ USER thấy (không phải ADMIN) -->
-                        <form th:action="@{/cart/add/{id}(id=${book.id})}" method="post"
+                        <!-- Out of stock - disabled button -->
+                        <div th:if="${book.quantity == null || book.quantity <= 0}"
+                            sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
+                            <button type="button" class="btn btn-out-of-stock btn-sm w-100" disabled>
+                                <i class="fas fa-ban me-1"></i> Hết hàng
+                            </button>
+                        </div>
+                        <!-- In stock - add to cart -->
+                        <form th:if="${book.quantity != null && book.quantity > 0}"
+                            th:action="@{/cart/add/{id}(id=${book.id})}" method="post"
                             sec:authorize="hasRole('USER') and !hasRole('ADMIN')">
                             <button type="submit" class="btn btn-add-cart btn-sm w-100 text-white">
                                 <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ

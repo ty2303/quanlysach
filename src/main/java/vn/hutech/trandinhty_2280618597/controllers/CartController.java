@@ -50,14 +50,20 @@ public class CartController {
     @PostMapping("/add/{bookId}")
     public String addToCart(@PathVariable("bookId") String bookId,
             @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-            Principal principal) {
+            Principal principal,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         if (principal == null) {
             return "redirect:/login";
         }
 
         User user = userService.findByUsername(principal.getName()).orElse(null);
         if (user != null) {
-            cartService.addToCart(user.getId(), bookId, quantity);
+            Cart result = cartService.addToCart(user.getId(), bookId, quantity);
+            if (result == null) {
+                redirectAttributes.addFlashAttribute("error", "Sản phẩm này đã hết hàng và không thể thêm vào giỏ!");
+                return "redirect:/books";
+            }
+            redirectAttributes.addFlashAttribute("success", "Đã thêm sản phẩm vào giỏ hàng!");
         }
 
         return "redirect:/books";

@@ -35,6 +35,11 @@ public class CartService {
         if (bookOpt.isPresent()) {
             Book book = bookOpt.get();
 
+            // Check if book is out of stock
+            if (book.getQuantity() == null || book.getQuantity() <= 0) {
+                return null; // Return null to indicate out of stock
+            }
+
             // Check if book already in cart
             Optional<CartItem> existingItem = cart.getItems().stream()
                     .filter(item -> item.getBook().getId().equals(bookId))
